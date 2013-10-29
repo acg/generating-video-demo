@@ -1,13 +1,33 @@
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 int mandelbrot_escapes(double cx, double cy, int n);
 
-int main()
+int main(int argc, char **argv)
 {
-  int cx = 640;
-  int cy = 480;
-  char bitmap[cy][cx][3];
+  int cx = 128;
+  int cy = 128;
+  int max_iterations = 100;
+
+  if (argc > 4) {
+    fprintf(stderr, "usage: %s [width] [height] [max-iterations]\n", argv[0]);
+    return 1;
+  }
+
+  argc--; argv++;
+
+  if (argc) cx = atoi((argc--, *argv++));
+  if (argc) cy = atoi((argc--, *argv++));
+  if (argc) max_iterations = atoi((argc--, *argv++));
+
+  char *bitmap;
+  unsigned int bitmap_size = cx*cy*3;
+
+  if (!(bitmap = malloc(bitmap_size))) {
+    perror("malloc failed");
+    return 111;
+  }
 
   double rx = 2.0;
   double ry = rx * cy / cx;
@@ -19,19 +39,21 @@ int main()
   int nx, ny;
   double x, y;
 
-  for (int iterations=1; iterations<100; iterations++) {
+  for (int iterations=1; iterations<max_iterations; iterations++) {
     for (y=ay, ny=0; ny<cy; y+=dy, ny++) {
       for (x=ax, nx=0; nx<cx; x+=dx, nx++) {
         int q = mandelbrot_escapes(x,y,iterations);
         for (int nrgb=0; nrgb<3; nrgb++)
-          bitmap[ny][nx][nrgb] = (char)(q * 0xff / iterations);
+          bitmap[ny*cx*3 + nx*3 + nrgb] = (char)(q * 0xff / iterations);
       }
     }
-    if (write(1, bitmap, sizeof bitmap) < 0) {
+    if (write(1, bitmap, bitmap_size) < 0) {
       perror("write error on stdout");
       return 111;
     }
   }
+
+  free(bitmap);
 
   return 0;
 }
