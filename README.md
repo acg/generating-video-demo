@@ -7,5 +7,10 @@ Codecs, encoding parameters, container formats...it all sounds pretty painful. B
 Herein lies a little demo of the technique. The generated video is of the [Mandelbrot set](http://en.wikipedia.org/wiki/Mandelbrot_set) coming into focus as the maximum escape iterations increases.
 
     make
+
+    make mp4
     vlc mandelbrot.mp4
+
+    make gif
+    google-chrome mandelbrot.gif
 

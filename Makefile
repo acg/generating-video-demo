@@ -32,7 +32,7 @@ FFMPEG_GIF_OPTS += -y
 FFMPEG_GIF_OPTS += $(FFMPEG_OUT_OPTS)
 
 
-all : mandelbrot.mp4
+all : mandelbrot
 
 mp4 : mandelbrot.mp4
 
